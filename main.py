@@ -58,3 +58,10 @@ def update_order(order_id: int, update_order: OrderUpdate):
     data = update_order.model_dump(exclude_unset=True, exclude_none=True)
     order.update(data)
     return order
+
+@app.delete("/orders/{order_id}", status_code=204)
+def delete_order(order_id: int):
+    if order_id not in order_dict:
+        raise HTTPException(status_code=404, detail="Order not found")
+    order_dict.pop(order_id)
+    
