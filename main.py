@@ -18,7 +18,7 @@ class OrderUpdate(BaseModel):
     amount: float | None = Field(default=None, gt=0, le=1000000) 
     status: Literal["pending", "completed", "canceled"] | None = None
 
-
+    
 @app.post("/orders", status_code=201)
 def create_order(order: Order):
     global next_id
