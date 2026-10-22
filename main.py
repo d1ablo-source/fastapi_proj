@@ -64,4 +64,7 @@ def delete_order(order_id: int):
     if order_id not in order_dict:
         raise HTTPException(status_code=404, detail="Order not found")
     order_dict.pop(order_id)
-    
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
