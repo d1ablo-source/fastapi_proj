@@ -12,7 +12,7 @@ def test_get_orders(test_client: TestClient):
     assert response.json() == []
 
 
-def test_create_orders(test_client: TestClient):
+def test_create_order(test_client: TestClient):
     response = test_client.post("/orders", json={"user": "lev", "amount": 120, "status": "pending"})
     body = response.json()
 
@@ -22,7 +22,7 @@ def test_create_orders(test_client: TestClient):
     assert body["status"] == "pending"
 
 
-def test_create_and_get_task(test_client: TestClient):
+def test_create_and_get_order(test_client: TestClient):
     post_response = test_client.post("/orders", json={"user": "lev", "amount": 120, "status": "pending"})
 
     assert post_response.status_code == 201
@@ -40,5 +40,22 @@ def test_create_and_get_task(test_client: TestClient):
     assert created_order.status == "pending"
 
 
-def test_patch(test_client: TestClient):
-    patch_response = test_client.patch("/orders/{order_id}")
+
+
+@pytest.mark.parametrize(
+    argnames=["payload", "expected_user", "expected_amount", "expected_status"],
+    argvalues=[
+        [{"user": "anna", "amount": 120, "status": "pending"}, "anna", 120, "pending"],
+        [{"user": "anna"}, "anna", 120, "pending"],
+        [{"status": "completed"}, "lev", 120, "completed"],
+        [{"amount": 12000, "status": "canceled"}, "lev", 12000, "canceled"] 
+        ]
+)
+def test_update(created_order, payload, expected_user, expected_amount, expected_status, test_client):
+    created_order_id = created_order['id']
+    response = test_client.patch(f"/orders/{created_order_id}", json=payload)
+    body = response.json()
+
+    assert body["user"] == expected_user
+    assert body["amount"] == expected_amount
+    assert body["status"] == expected_status
