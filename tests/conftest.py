@@ -12,3 +12,8 @@ def test_client():
 @pytest.fixture(autouse=True)
 def clear_order():
     order_dict.clear()
+
+@pytest.fixture()
+def created_order(test_client: TestClient):
+    response = test_client.post("/orders", json={"user": "lev", "amount": 120, "status": "pending"})
+    return response.json()
